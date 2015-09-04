@@ -7,7 +7,8 @@ var sourcemaps = require('gulp-sourcemaps');
 var paths = require('../paths');
 var compilerOptions = require('../babel-options');
 var assign = Object.assign || require('object.assign');
-
+var sass = require('gulp-sass');
+var aurelia = require('aurelia-cli');
 // transpiles changed es6 files to SystemJS format
 // the plumber() call prevents 'pipe breaking' caused
 // by errors from other gulp plugins
@@ -15,18 +16,29 @@ var assign = Object.assign || require('object.assign');
 gulp.task('build-system', function () {
   return gulp.src(paths.source)
     .pipe(plumber())
-    .pipe(changed(paths.output, {extension: '.js'}))
+    .pipe(changed(paths.appOutput, {extension: '.js'}))
     .pipe(sourcemaps.init({loadMaps: true}))
     .pipe(to5(assign({}, compilerOptions, {modules:'system'})))
     .pipe(sourcemaps.write({includeContent: true}))
-    .pipe(gulp.dest(paths.output));
+    .pipe(gulp.dest(paths.appOutput));
 });
 
 // copies changed html files to the output directory
 gulp.task('build-html', function () {
   return gulp.src(paths.html)
-    .pipe(changed(paths.output, {extension: '.html'}))
-    .pipe(gulp.dest(paths.output));
+    .pipe(changed(paths.appOutput, {extension: '.html'}))
+    .pipe(gulp.dest(paths.appOutput));
+});
+
+// concat and minify CSS files
+gulp.task('minify-css', function() {
+  return gulp.src(paths.sass)
+      .pipe(sass())
+      .pipe(gulp.dest(paths.output+'styles'));
+});
+
+gulp.task('bundle', function() {
+  aurelia.bundle()
 });
 
 // this task calls the clean task (located
@@ -36,7 +48,7 @@ gulp.task('build-html', function () {
 gulp.task('build', function(callback) {
   return runSequence(
     'clean',
-    ['build-system', 'build-html'],
+    ['build-system', 'build-html', 'minify-css'],
     callback
   );
 });

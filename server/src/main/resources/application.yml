@@ -1,0 +1,91 @@
+resources:
+  projectroot: /home/giovanni/Projetos/demo
+app:
+  version: de4db33f
+project:
+  artifactId: demo
+  name: demo
+  description: Demo application
+
+info:
+  build:
+    artifact: ${project.artifactId}
+    name: ${project.name}
+    description: ${project.description}
+  spring:
+    profiles: ${spring.profiles.active:default}
+  app:
+    name: ${vcap.application.name:demo}:${vcap.application.instance_index:*}
+    start: ${vcap.application.start:N/A}
+
+spring:
+  main:
+    sources: demo.DemoApplication
+  thymeleaf:
+    mode: LEGACYHTML5
+  jpa:
+    show_sql: false
+    hibernate:
+      naming_strategy: org.hibernate.cfg.EJB3NamingStrategy
+      ddl_auto: none
+
+elasticsearch:
+  client:
+    endpoint: ${ELASTICSEARCH_ENDPOINT:http://localhost:9200}
+    index: ${ELASTICSEARCH_INDEX:sagan}
+
+server:
+  tomcat:
+    # Write access log to target/logs/access_log.YYYY-MM-DD.log
+    # See http://tomcat.apache.org/tomcat-7.0-doc/api/org/apache/catalina/valves/AccessLogValve.html
+    accessLogEnabled: true
+    accessLogPattern: '%h %l %u %t "%r" %s %b %{Host}i %{Location}o'
+    baseDir: ''
+    backgroundProcessorDelay: 1
+
+logging:
+  file: logs/application_log
+  level:
+    ROOT: WARN
+    org.apache.http: WARN
+    # turn up to DEBUG to diagnose GitHub API issues
+    org.apache.http.headers: WARN
+    # turn up to DEBUG to see information about guides as they are fetched and processed
+    demo.guides.support: WARN
+    # always log high-level information about application startup
+    demo.SiteMain: INFO
+    # log generated password for admin endpoints, e.g. /env, /beans
+    # See http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#production-ready-endpoints
+    org.springframework.boot.autoconfigure.security.AuthenticationManagerConfiguration: INFO
+---
+
+spring:
+  profiles: staging,production
+security:
+  require_ssl: true
+server:
+  # when deployed to CloudFoundry, tomcat is behind a CDN proxy
+  tomcat:
+    remote_ip_header: x-forwarded-for
+    protocol_header: x-forwarded-proto
+
+---
+
+spring:
+  profiles: default
+  thymeleaf:
+    cache: false
+cache:
+  timetolive: 0
+disqus_shortname: ${DISQUS_SHORTNAME:spring-io-localhost}
+---
+
+spring:
+  profiles: staging
+disqus_shortname: ${DISQUS_SHORTNAME:spring-io-staging}
+
+---
+
+spring:
+  profiles: production
+disqus_shortname: ${DISQUS_SHORTNAME:spring-io}

@@ -15,7 +15,10 @@ jar {
     version = '0.0.1-SNAPSHOT'
 }
 dependencies {
+    compile project(":client")
     compile("org.springframework.boot:spring-boot-starter-thymeleaf")
     compile("org.springframework.boot:spring-boot-starter-web")
+    // nekohtml is required for thymeleaf's LEGACYHTML5 mode
+    runtime 'net.sourceforge.nekohtml:nekohtml'
     testCompile("org.springframework.boot:spring-boot-starter-test")
 }

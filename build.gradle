@@ -51,7 +51,7 @@ configure(javaProjects) {
 }
 
 configure(bootProjects) {
-	  apply plugin: "io.spring.dependency-management"
+    apply plugin: "io.spring.dependency-management"
     apply plugin: 'spring-boot'
     apply from: "$gradleDir/integTest.gradle"
     apply from: "$gradleDir/writeGitPropertiesFile.gradle"

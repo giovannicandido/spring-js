@@ -16,16 +16,9 @@ var config = {
         'github:aurelia/history-browser'
       ],
       options: {
-        inject: true
+        inject: true,
+        minify: true
       }
-    }
-  },
-  template: {
-    "dist/app-bundle": {
-      pattern: 'dist/*.html',
-      options: {
-        inject:  true
-     }
     }
   }
 };
