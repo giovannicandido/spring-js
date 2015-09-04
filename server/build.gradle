@@ -1,0 +1,21 @@
+springBoot {
+    mainClass = 'demo.DemoApplication'
+}
+
+applicationDefaultJvmArgs = [
+        // Set SAGAN_HOME env variable to the root of sagan project. This allows to register an additional
+        // resource handler location and serve static resources directly from the sagan-client module during dev.
+        // See sagan.ClientResourcesConfig
+        "-DDEMO_HOME=${rootProject.rootDir}"
+]
+
+
+jar {
+    baseName = 'server'
+    version = '0.0.1-SNAPSHOT'
+}
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-thymeleaf")
+    compile("org.springframework.boot:spring-boot-starter-web")
+    testCompile("org.springframework.boot:spring-boot-starter-test")
+}

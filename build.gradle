@@ -1,0 +1,67 @@
+def vJavaLang = '1.8'
+def javaProjects = [ project(':server') ]
+def bootProjects = javaProjects
+def gradleDir = "${rootProject.rootDir}/gradle"
+
+wrapper.gradleVersion = '2.4'
+
+buildscript {
+    ext.springRepo = 'http://repo.spring.io/libs-release'
+
+    repositories {
+        maven { url springRepo }
+    }
+
+    dependencies {
+		classpath 'io.spring.gradle:dependency-management-plugin:0.5.3.RELEASE'
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:1.2.5.RELEASE"
+    }
+}
+
+configure(allprojects) {
+
+}
+
+configure(rootProject) {
+    apply from: 'gradle/gitMetadata.gradle'
+}
+
+configure(javaProjects) {
+    apply plugin: 'java'
+
+    targetCompatibility = vJavaLang
+    sourceCompatibility = vJavaLang
+
+    repositories {
+        maven { url springRepo }
+    }
+
+    dependencies {
+        compile 'org.slf4j:slf4j-api'
+        testCompile 'junit:junit'
+
+    }
+
+    configurations {
+        // replaced with jcl-over-slf4j
+        all*.exclude group: 'commons-logging', module: 'commons-logging'
+        // replaced with log4j-over-slf4j
+        all*.exclude group: 'log4j', module: 'log4j'
+    }
+}
+
+configure(bootProjects) {
+	  apply plugin: "io.spring.dependency-management"
+    apply plugin: 'spring-boot'
+    apply from: "$gradleDir/integTest.gradle"
+    apply from: "$gradleDir/writeGitPropertiesFile.gradle"
+
+    springBoot.backupSource = false
+    bootRun.dependsOn writeGitPropertiesFile
+
+	dependencyManagement {
+		imports {
+			mavenBom 'io.spring.platform:platform-bom:1.1.3.RELEASE'
+		}
+	}
+}
