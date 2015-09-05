@@ -7,16 +7,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.resource.AppCacheManifestTransformer;
 import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter;
-import org.springframework.web.servlet.resource.ResourceUrlProvider;
 import org.springframework.web.servlet.resource.VersionResourceResolver;
-import org.springframework.web.servlet.view.groovy.GroovyMarkupViewResolver;
-
-import javax.annotation.PostConstruct;
-import java.util.Collections;
 
 /**
  * @author Giovanni Silva
@@ -34,7 +28,7 @@ public class WebMVCConfig extends WebMvcConfigurerAdapter {
     private String appVersion;
 
     private String getProjectRootRequired() {
-        Assert.state(this.projectRoot != null, "Please set \"resources.projectRoot\" in application.yml");
+        Assert.state(this.projectRoot != null && !this.projectRoot.trim().equals("") , "Please set \"resources.projectRoot\" in application-development.yml");
         return this.projectRoot;
     }
     @Bean

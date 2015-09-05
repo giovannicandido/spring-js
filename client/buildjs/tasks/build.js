@@ -8,7 +8,6 @@ var paths = require('../paths');
 var compilerOptions = require('../babel-options');
 var assign = Object.assign || require('object.assign');
 var sass = require('gulp-sass');
-var aurelia = require('aurelia-cli');
 // transpiles changed es6 files to SystemJS format
 // the plumber() call prevents 'pipe breaking' caused
 // by errors from other gulp plugins
@@ -31,15 +30,12 @@ gulp.task('build-html', function () {
 });
 
 // concat and minify CSS files
-gulp.task('minify-css', function() {
+gulp.task('sass', function() {
   return gulp.src(paths.sass)
-      .pipe(sass())
+      .pipe(sass({outputStyle: 'compressed'}))
       .pipe(gulp.dest(paths.output+'styles'));
 });
 
-gulp.task('bundle', function() {
-  aurelia.bundle()
-});
 
 // this task calls the clean task (located
 // in ./clean.js), then runs the build-system
@@ -48,7 +44,16 @@ gulp.task('bundle', function() {
 gulp.task('build', function(callback) {
   return runSequence(
     'clean',
-    ['build-system', 'build-html', 'minify-css'],
+    ['build-system','bundle', 'build-html', 'sass'],
     callback
+  );
+});
+
+gulp.task('build-dev', function(callback) {
+  return runSequence(
+      'unbundle',
+      'clean',
+      ['build-system', 'build-html', 'sass'],
+      callback
   );
 });

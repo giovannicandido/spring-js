@@ -1,5 +1,3 @@
-resources:
-  projectroot: /home/giovanni/Projetos/demo
 app:
   version: de4db33f
 project:
